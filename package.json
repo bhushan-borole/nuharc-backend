@@ -1,0 +1,73 @@
+{
+  "name": "nuharc",
+  "version": "1.0.0",
+  "description": "A Disaster Management Application for Dublin built using the MERN Stack",
+  "main": "server.js",
+  "engines": {
+    "node": "16.14.2"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "server": "SET NODE_ENV=development & nodemon server.js",
+    "health-checks-test": "mocha loadBalancers/health-checks/health-checks.spec.js",
+    "disaster-route-service-checks-test": "mocha src/services/disaster-route.service.spec.js"
+  },
+  "proxy": "http://localhost:8080",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TCD-ASE-6/Nuharc.git"
+  },
+  "author": "TCD ASE Group 6",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TCD-ASE-6/Nuharc/issues"
+  },
+  "homepage": "https://github.com/TCD-ASE-6/Nuharc#readme",
+  "dependencies": {
+    "axios": "^0.25.0",
+    "bcryptjs": "^2.4.3",
+    "bootstrap": "^5.1.3",
+    "concurrently": "^7.0.0",
+    "config": "^3.3.7",
+    "cors": "^2.8.5",
+    "cypress": "^9.3.1",
+    "dotenv": "^14.2.0",
+    "express": "^4.17.2",
+    "google-map-react": "^2.1.10",
+    "google-polyline": "^1.0.3",
+    "html-webpack-plugin": "^5.5.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.1.7",
+    "passport": "^0.5.2",
+    "passport-jwt": "^4.0.0",
+    "react-places-autocomplete": "^7.3.0",
+    "request": "^2.81.0",
+    "stoppable": "^1.1.0",
+    "validator": "^13.7.0",
+    "webpack": "^5.67.0",
+    "@testing-library/jest-dom": "^5.16.1",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/user-event": "^13.5.0",
+    "node-fetch": "^3.2.3",
+    "react": "^17.0.2",
+    "react-bootstrap": "^2.1.1",
+    "react-cookie": "^4.1.1",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.6",
+    "react-router-dom": "^6.2.1",
+    "react-scripts": "5.0.0",
+    "react-transition-group": "^4.4.2",
+    "reactstrap": "^9.0.1",
+    "redux": "^4.1.2",
+    "redux-thunk": "^2.4.1",
+    "uuid": "^8.3.2",
+    "web-vitals": "^2.1.3"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^8.2.1",
+    "node-fetch": "^2.0.0",
+    "nodemon": "^2.0.15",
+    "cypress": "^9.3.1"
+  }
+}
