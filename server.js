@@ -5,13 +5,14 @@ const passport = require("passport");
 const config = require("config");
 const path = require("path");
 const request = require("request");
-const createHealthCheckManager = require("./loadBalancers/health-checks/index").createHealthCheckManager
+const createHealthCheckManager =
+  require("./loadBalancers/health-checks/index").createHealthCheckManager;
 
 //APIs
 const directionsAPI = require("./routes/api/directions");
 const incidentsAPI = require("./routes/api/reportDisasterAPI");
 const usersAPI = require("./routes/api/users");
-const WeightedRoundRobin  = require("./loadBalancers/weightedRoundRobin");
+const WeightedRoundRobin = require("./loadBalancers/weightedRoundRobin");
 
 const app1 = express();
 const app2 = express();
@@ -47,10 +48,10 @@ const weightedRoundRobinHandler = (req, res) => {
 
 // Get MongoDbURI according to ENV script
 // NODE_ENV = "production"
-const db = config.get("mongoURI")
-  // process.env.NODE_ENV.trim() === "production"
-  //   ? config.get("mongoURI")
-  //   : config.get("devMongoURI");
+const db = config.get("mongoURI");
+// process.env.NODE_ENV.trim() === "production"
+//   ? config.get("mongoURI")
+//   : config.get("devMongoURI");
 
 // Connect to MongoDB
 mongoose
@@ -100,66 +101,68 @@ app2.use("/api/incident", incidentsAPI);
 
 // const port = process.env.PORT || 8080;
 
-const server = express().get("*", weightedRoundRobinHandler).post("*", weightedRoundRobinHandler)
+const server = express()
+  .get("*", weightedRoundRobinHandler)
+  .post("*", weightedRoundRobinHandler);
+server.use(cors());
 
 const beforeShutdownCallback = () => {
-  console.log("Shutdown in Progress")
-}
+  console.log("Shutdown in Progress");
+};
 
 const onShutdownCallback = () => {
-  console.log("Shutdown has occured")
-}
+  console.log("Shutdown has occured");
+};
 
 const healthCheckLogger = (log, error) => {
-  console.log("Log from healthcheck...", log)
-  console.log("Error from healthcheck...", error)
-}
+  console.log("Log from healthcheck...", log);
+  console.log("Error from healthcheck...", error);
+};
 
 const onSendFailureWithShutdownLogger = () => {
-  console.log("Sending failure has occcured for Shutdown ")
-}
+  console.log("Sending failure has occcured for Shutdown ");
+};
 
-const livenessCheck = () => new Promise((resolve, _reject) => {
-  // TODO: Need to add logic overhere to set app functioning correctly
-  const appFunctioning = true;
-  if (appFunctioning) {
-    resolve();
-  } else {
-    reject(new Error("App is not functioning correctly"));
-  }
-});
+const livenessCheck = () =>
+  new Promise((resolve, _reject) => {
+    // TODO: Need to add logic overhere to set app functioning correctly
+    const appFunctioning = true;
+    if (appFunctioning) {
+      resolve();
+    } else {
+      reject(new Error("App is not functioning correctly"));
+    }
+  });
 
 /**
  * Code to support graceful shutdown for the database in case shutdown occurs
  */
 
-function onSigterm () {
-  console.log('server is starting cleanup')
+function onSigterm() {
+  console.log("server is starting cleanup");
   // Adding graceful shudown for database
-  return Promise.all([
-    mongoose.connection.close()
-  ])
+  return Promise.all([mongoose.connection.close()]);
 }
 
-const options = { 
+const options = {
   timeout: 1000,
   onShutdown: onShutdownCallback,
   beforeShutdown: beforeShutdownCallback,
   healthChecks: {
-   "/health/liveness": livenessCheck,
+    "/health/liveness": livenessCheck,
     __unsafeExposeStackTraces: true,
-    verbatim: true, 
+    verbatim: true,
   },
   sendFailuresWithShutdown: true,
   onSendFailureWithShutdown: onSendFailureWithShutdownLogger,
   logging: healthCheckLogger,
-  statusSuccess:200,
+  statusSuccess: 200,
   statusError: 500,
   headers: {
     "Access-Control-Allow-Origin": "*",
   },
-  onSignal: onSigterm
-} 
+  onSignal: onSigterm,
+};
 createHealthCheckManager(server, options);
 
 server.listen(8080);
