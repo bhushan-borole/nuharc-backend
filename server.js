@@ -2,11 +2,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const passport = require("passport");
+const https = require("https");
 const config = require("config");
 const path = require("path");
 const request = require("request");
 const createHealthCheckManager =
   require("./loadBalancers/health-checks/index").createHealthCheckManager;
+const fs = require("fs");
 
 //APIs
 const directionsAPI = require("./routes/api/directions");
@@ -100,10 +102,10 @@ app2.use("/api/incident", incidentsAPI);
 // });
 
 // const port = process.env.PORT || 8080;
-
 const server = express()
   .get("*", weightedRoundRobinHandler)
   .post("*", weightedRoundRobinHandler);
+
 server.use(cors());
 
 const beforeShutdownCallback = () => {
@@ -165,7 +167,23 @@ const options = {
 };
 createHealthCheckManager(server, options);
 
-server.listen(8080);
+const optionsHTTPS = {
+  key: fs.readFileSync("./localhost-key.pem"),
+  cert: fs.readFileSync("./localhost.pem"),
+  // headers: {
+  //   'Access-Control-Allow-Origin': '*',
+  //   'Access-Control-Allow-Methods': 'OPTIONS, POST, GET',
+  //   'Access-Control-Max-Age': 2592000, // 30 days
+  //   /** add other headers as per requirement */
+  // }
+};
+
+// server.listen(8080);
+https.createServer(optionsHTTPS, server).listen(8080, function () {
+  console.log(
+    "Example app listening on port 8080! Go to https://localhost:8080/"
+  );
+});
 
 app1.listen(3004, () => console.log(`server started on port 3004`));
 app2.listen(3005, () => console.log(`server started on port 3005`));
